@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Incremental Caesar Cipher</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #ffffff;
+            color: #333;
+            text-align: center;
+            padding: 20px;
+        }
+
+        h1 {
+            color: #2c3e50;
+        }
+
+        label {
+            text-align: left;
+            display: block;
+            margin: 10px 0 5px;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            padding: 10px;
+            width: 300px;
+            border: 1px solid #ccc;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+
+        button {
+            background-color: #2980b9;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+
+        button:hover {
+            background-color: #3498db;
+        }
+
+        #outputText {
+            background-color: #ecf0f1;
+            padding: 15px;
+            border-radius: 5px;
+            display: inline-block;
+            margin-top: 20px;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .box {
+            background-color: #f0f4f8;
+            padding: 20px;
+            border: 1px solid #ccc;
+            border-radius: 10px;
+            display: inline-block;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <h1>Incremental Caesar Cipher</h1>
+
+<div class="box">
+    <label for="inputText">Enter Text:</label>
+    <input type="text" id="inputText" placeholder="Enter text here" />
+
+    <label for="shiftStart">Starting Shift (n1):</label>
+    <input type="number" id="shiftStart" value="3" />
+
+    <label for="shiftIncrement">Shift Increment (n2):</label>
+    <input type="number" id="shiftIncrement" value="1" />
+    
+    <br>
+
+    <button onclick="encryptText()">Encrypt</button>
+</div>
+    <h2>Encrypted Text:</h2>
+    <p id="outputText"></p>
+
+    <script>
+        /**
+         * Function to apply a Caesar Cipher shift to a given character.
+         * 
+         * @param {string} char - The character to be shifted.
+         * @param {number} shift - The number of positions to shift in the alphabet.
+         * @returns {string} - The shifted character.
+         */
+        function rotateCaesar(char, shift) {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';  // Define the alphabet
+            if (!alphabet.includes(char)) return char;  // Return the char if it's not a letter
+
+            // Calculate the new index after shifting and ensure it wraps around with modulo
+            const newIndex = (alphabet.indexOf(char) + shift) % 26;
+            return alphabet[newIndex];  // Return the shifted character
+        }
+
+        /**
+         * Main function to encrypt the input text using only the Caesar Cipher with incremental shifts.
+         */
+        function encryptText() {
+            // Retrieve input values
+            const text = document.getElementById('inputText').value.toUpperCase();  // Convert input to uppercase
+            const n1 = parseInt(document.getElementById('shiftStart').value, 10);  // Starting shift (n1)
+            const n2 = parseInt(document.getElementById('shiftIncrement').value, 10);  // Shift increment (n2)
+
+            let encryptedText = '';  // Initialize an empty string for the encrypted text
+            let shift = n1;  // Start with the initial shift value
+
+            // Loop through each character in the input text
+            for (let char of text) {
+                // Apply the Caesar Cipher shift
+                char = rotateCaesar(char, shift);        
+                // Add the encrypted character to the result
+                encryptedText += char;
+                // Increase the shift value to simulate the rotor behavior
+                shift += n2;  
+            }
+
+            // Display the encrypted text in the output paragraph
+            document.getElementById('outputText').textContent = encryptedText;
+        }
+    </script>
+</body>
+</html>
