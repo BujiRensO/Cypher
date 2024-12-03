@@ -66,9 +66,9 @@
         }
     </style>
 </head>
-<body>
-    <h1>Incremental Caesar Cipher</h1>
 
+<body>
+    <h1>Caesar Enigma Cipher</h1>
 <div class="box">
     <label for="inputText">Enter Text:</label>
     <input type="text" id="inputText" placeholder="Enter text here" />
@@ -78,54 +78,60 @@
 
     <label for="shiftIncrement">Shift Increment (n2):</label>
     <input type="number" id="shiftIncrement" value="1" />
-    
-    <br>
-
+<br>
     <button onclick="encryptText()">Encrypt</button>
 </div>
     <h2>Encrypted Text:</h2>
     <p id="outputText"></p>
 
     <script>
-        /**
-         * Function to apply a Caesar Cipher shift to a given character.
-         * 
-         * @param {string} char - The character to be shifted.
-         * @param {number} shift - The number of positions to shift in the alphabet.
-         * @returns {string} - The shifted character.
-         */
-        function rotateCaesar(char, shift) {
-            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';  // Define the alphabet
-            if (!alphabet.includes(char)) return char;  // Return the char if it's not a letter
-
-            // Calculate the new index after shifting and ensure it wraps around with modulo
-            const newIndex = (alphabet.indexOf(char) + shift) % 26;
-            return alphabet[newIndex];  // Return the shifted character
+        function plugboardSwap(char, plugboard) {
+            return plugboard[char] || char;
         }
 
-        /**
-         * Main function to encrypt the input text using only the Caesar Cipher with incremental shifts.
-         */
+        function rotateCaesar(char, shift) {
+            const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+            if (!alphabet.includes(char)) return char;
+
+            const newIndex = (alphabet.indexOf(char) + shift) % 26;
+            return alphabet[newIndex];
+        }
+
         function encryptText() {
-            // Retrieve input values
-            const text = document.getElementById('inputText').value.toUpperCase();  // Convert input to uppercase
-            const n1 = parseInt(document.getElementById('shiftStart').value, 10);  // Starting shift (n1)
-            const n2 = parseInt(document.getElementById('shiftIncrement').value, 10);  // Shift increment (n2)
+            const text = document.getElementById('inputText').value.toUpperCase();
+            const n1 = parseInt(document.getElementById('shiftStart').value, 10);
+            const n2 = parseInt(document.getElementById('shiftIncrement').value, 10);
 
-            let encryptedText = '';  // Initialize an empty string for the encrypted text
-            let shift = n1;  // Start with the initial shift value
+            const plugboard = {  
+                'A': 'M', 'M': 'A',
+                'B': 'N', 'N': 'B',
+                'C': 'O', 'O': 'C',
+                'D': 'P', 'P': 'D',
+                'E': 'Q', 'Q': 'E',
+                'F': 'R', 'R': 'F',
+                'G': 'S', 'S': 'G',
+                'H': 'T', 'T': 'H',
+                'I': 'U', 'U': 'I',
+                'J': 'V', 'V': 'J',
+                'K': 'W', 'W': 'K',
+                'L': 'X', 'X': 'L',
+                'Y': 'Z', 'Z': 'Y'
+            };
 
-            // Loop through each character in the input text
+            let encryptedText = '';
+            let shift = n1;
+
             for (let char of text) {
-                // Apply the Caesar Cipher shift
-                char = rotateCaesar(char, shift);        
-                // Add the encrypted character to the result
+                console.log(`Original: ${char}`);  // Debugging output
+                char = plugboardSwap(char, plugboard);
+                console.log(`After Plugboard Swap: ${char}`);  // Debugging output
+                char = rotateCaesar(char, shift);
+                console.log(`After Caesar Rotation: ${char}`);  // Debugging output
+
                 encryptedText += char;
-                // Increase the shift value to simulate the rotor behavior
-                shift += n2;  
+                shift += n2;  // Increment shift for the next character
             }
 
-            // Display the encrypted text in the output paragraph
             document.getElementById('outputText').textContent = encryptedText;
         }
     </script>
