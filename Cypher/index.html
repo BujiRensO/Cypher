@@ -6,7 +6,6 @@
     <title>Incremental Caesar Cipher</title>
     <link rel="stylesheet" href="style.css">
 </head>
-
 <body>
     <button id="darkModeToggle">Toggle Dark Mode</button>
     <h1>Caesar Enigma Cipher</h1>
@@ -18,89 +17,68 @@
         <input type="number" id="shiftStart" value="3" oninput="updateButton()" />
 
         <label for="shiftIncrement">Shift Increment (n2):</label>
-        <input type="number" id="shiftIncrement" value="1" oninput="updateButton()" />
+        <input type="number" id="shiftIncrement" value="2" oninput="updateButton()" />
         <br>
-        <button id="encryptButton" onclick="encryptText()">Encrypt</button>
+        <button id="encryptButton" onclick="processText()">Encrypt</button>
     </div>
-    <h2 id="outputHeading">Encrypted Text:</h2>
+    <h2 id="outputHeading">Result:</h2>
     <div id="outputContainer">
         <span id="outputText"></span>
         <button id="copyButton" onclick="copyText()">Copy</button>
     </div>
 
     <script>
-        function plugboardSwap(char, plugboard) {
-            return plugboard[char] || char;
-        }
-
         function rotateCaesar(char, shift) {
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
-            if (!alphabet.includes(char)) return char;
+            if (!alphabet.includes(char)) return char; // Skip non-alphabet characters
 
-            const newIndex = (alphabet.indexOf(char) + shift + 26) % 26; // Ensure non-negative index
+            const newIndex = (alphabet.indexOf(char) + shift + 26) % 26; // Ensure index wraps around
             return alphabet[newIndex];
         }
 
-        function encryptText() {
+        function processText() {
             const text = document.getElementById('inputText').value.toUpperCase();
             const n1 = parseInt(document.getElementById('shiftStart').value, 10);
             const n2 = parseInt(document.getElementById('shiftIncrement').value, 10);
+            const isDecrypt = n1 < 0 && n2 < 0; // Check if we are decrypting
 
-            const plugboard = {  
-                'A': 'M', 'M': 'A',
-                'B': 'N', 'N': 'B',
-                'C': 'O', 'O': 'C',
-                'D': 'P', 'P': 'D',
-                'E': 'Q', 'Q': 'E',
-                'F': 'R', 'R': 'F',
-                'G': 'S', 'S': 'G',
-                'H': 'T', 'T': 'H',
-                'I': 'U', 'U': 'I',
-                'J': 'V', 'V': 'J',
-                'K': 'W', 'W': 'K',
-                'L': 'X', 'X': 'L',
-                'Y': 'Z', 'Z': 'Y'
-            };
-
-            let encryptedText = '';
-            let shift = n1;
+            let resultText = '';
+            let shift = n1; // Starting shift
 
             for (let char of text) {
-                char = plugboardSwap(char, plugboard);
-                char = rotateCaesar(char, shift);
-                encryptedText += char;
-                shift += n2;
+                if (/[A-Z]/.test(char)) {
+                    char = rotateCaesar(char, shift);
+                    shift += n2; // Adjust shift incrementally
+                }
+                resultText += char;
             }
 
-            document.getElementById('outputText').textContent = encryptedText;
-        }
-
-        function copyText() {
-            const textToCopy = document.getElementById('outputText').textContent;
-
-            navigator.clipboard.writeText(textToCopy)
-                .then(() => alert("Text copied to clipboard!"))
-                .catch(err => console.error("Error copying text: ", err));
+            const heading = isDecrypt ? "Decrypted Text:" : "Encrypted Text:";
+            document.getElementById('outputHeading').textContent = heading;
+            document.getElementById('outputText').textContent = resultText;
         }
 
         function updateButton() {
             const n1 = parseInt(document.getElementById('shiftStart').value, 10);
             const n2 = parseInt(document.getElementById('shiftIncrement').value, 10);
             const button = document.getElementById('encryptButton');
-            const heading = document.getElementById('outputHeading');
 
             if (n1 < 0 && n2 < 0) {
                 button.textContent = 'Decrypt';
-                heading.textContent = 'Decrypted Text:';
             } else {
                 button.textContent = 'Encrypt';
-                heading.textContent = 'Encrypted Text:';
             }
         }
 
-        // Dark Mode Toggle Functionality
-        const darkModeToggle = document.getElementById('darkModeToggle');
-        darkModeToggle.addEventListener('click', () => {
+        function copyText() {
+            const textToCopy = document.getElementById('outputText').textContent;
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => alert("Text copied to clipboard!"))
+                .catch(err => console.error("Error copying text: ", err));
+        }
+
+        // Dark Mode Toggle
+        document.getElementById('darkModeToggle').addEventListener('click', () => {
             document.body.classList.toggle('dark-mode');
         });
     </script>
