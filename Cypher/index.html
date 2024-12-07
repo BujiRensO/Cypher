@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Incremental Caesar Cipher</title>
     <style>
+        /* Existing Styles */
         body {
             font-family: Arial, sans-serif;
             background-color: #ffffff;
@@ -66,18 +67,38 @@
             background-color: #3498db;
         }
 
+        #outputContainer {
+            display: inline-block;
+            margin-top: 20px;
+            text-align: center;
+        }
+
         #outputText {
             background-color: #ecf0f1;
             padding: 15px;
             border-radius: 5px;
             display: inline-block;
-            margin-top: 20px;
             font-family: 'Courier New', Courier, monospace;
         }
 
         body.dark-mode #outputText {
             background-color: #333;
             color: #ffffff;
+        }
+
+        #copyButton {
+            margin-left: 10px;
+            padding: 8px 12px;
+            font-size: 14px;
+            background-color: #27ae60;
+            color: #fff;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        #copyButton:hover {
+            background-color: #2ecc71;
         }
 
         .box {
@@ -129,7 +150,10 @@
         <button id="encryptButton" onclick="encryptText()">Encrypt</button>
     </div>
     <h2 id="outputHeading">Encrypted Text:</h2>
-    <p id="outputText"></p>
+    <div id="outputContainer">
+        <span id="outputText"></span>
+        <button id="copyButton" onclick="copyText()">Copy</button>
+    </div>
 
     <script>
         function plugboardSwap(char, plugboard) {
@@ -176,6 +200,14 @@
             }
 
             document.getElementById('outputText').textContent = encryptedText;
+        }
+
+        function copyText() {
+            const textToCopy = document.getElementById('outputText').textContent;
+
+            navigator.clipboard.writeText(textToCopy)
+                .then(() => alert("Text copied to clipboard!"))
+                .catch(err => console.error("Error copying text: ", err));
         }
 
         function updateButton() {
