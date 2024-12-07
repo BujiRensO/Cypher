@@ -121,14 +121,14 @@
         <input type="text" id="inputText" placeholder="Enter text here" />
 
         <label for="shiftStart">Starting Shift (n1):</label>
-        <input type="number" id="shiftStart" value="3" />
+        <input type="number" id="shiftStart" value="3" oninput="updateButton()" />
 
         <label for="shiftIncrement">Shift Increment (n2):</label>
-        <input type="number" id="shiftIncrement" value="1" />
+        <input type="number" id="shiftIncrement" value="1" oninput="updateButton()" />
         <br>
-        <button onclick="encryptText()">Encrypt</button>
+        <button id="encryptButton" onclick="encryptText()">Encrypt</button>
     </div>
-    <h2>Encrypted Text:</h2>
+    <h2 id="outputHeading">Encrypted Text:</h2>
     <p id="outputText"></p>
 
     <script>
@@ -140,7 +140,7 @@
             const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
             if (!alphabet.includes(char)) return char;
 
-            const newIndex = (alphabet.indexOf(char) + shift) % 26;
+            const newIndex = (alphabet.indexOf(char) + shift + 26) % 26; // Ensure non-negative index
             return alphabet[newIndex];
         }
 
@@ -176,6 +176,21 @@
             }
 
             document.getElementById('outputText').textContent = encryptedText;
+        }
+
+        function updateButton() {
+            const n1 = parseInt(document.getElementById('shiftStart').value, 10);
+            const n2 = parseInt(document.getElementById('shiftIncrement').value, 10);
+            const button = document.getElementById('encryptButton');
+            const heading = document.getElementById('outputHeading');
+
+            if (n1 < 0 && n2 < 0) {
+                button.textContent = 'Decrypt';
+                heading.textContent = 'Decrypted Text:';
+            } else {
+                button.textContent = 'Encrypt';
+                heading.textContent = 'Encrypted Text:';
+            }
         }
 
         // Dark Mode Toggle Functionality
